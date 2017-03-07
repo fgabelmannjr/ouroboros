@@ -145,6 +145,14 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         return rootDataSource.collectionView(collectionView, cellForItemAt: adjustedPath)
     }
     
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard (rootDelegate != nil) else {
+            return
+        }
+        
+        rootDelegate?.collectionView!(collectionView, didSelectItemAt: indexPath)
+    }
+    
     open func indexPathForPreferredFocusedView(in collectionView: UICollectionView) -> IndexPath? {
         return manualFocusCell
     }
