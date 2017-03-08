@@ -149,29 +149,6 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         guard (rootDelegate != nil) else {
             return
         }
-        
-        cell.alpha = 0.20
-        
-        let centerIndexPath = IndexPath(item: currentlyFocusedItem, section: 0)
-        if let centerCell = collectionView.cellForItem(at: centerIndexPath) {
-            
-            DispatchQueue.main.async {
-                UIView.animate(withDuration: 0.2, animations: {
-                    
-                    centerCell.alpha = 1.0
-                    
-                    for visibleCell in collectionView.visibleCells as [UICollectionViewCell] {
-                        let indexPath = collectionView.indexPath(for: visibleCell)
-                        if indexPath?.item != centerIndexPath.item {
-                            visibleCell.alpha = 0.20
-                        }
-                    }
-                    
-                })
-            }
-            
-        }
-        
         rootDelegate?.collectionView!(collectionView, willDisplay: cell, forItemAt: indexPath);
     }
     
