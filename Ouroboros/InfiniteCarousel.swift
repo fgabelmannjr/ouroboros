@@ -24,7 +24,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         setup()
     }
     
-    func setup() {
+    @objc func setup() {
         guard collectionViewLayout is UICollectionViewFlowLayout else {
             fatalError("InfiniteCarousel can only be used with UICollectionViewFlowLayout instances")
         }
@@ -53,18 +53,18 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
     @IBInspectable open var autoScrollTime: Double = 9.0
     
     /// The timer used to control auto-scroll behavior
-    var scrollTimer: Timer?
+    @objc var scrollTimer: Timer?
     
     /// The original data source for the carousel
-    open internal(set) weak var rootDataSource: UICollectionViewDataSource!
+    @objc open internal(set) weak var rootDataSource: UICollectionViewDataSource!
         
     /// The original delegate for the carousel
-    open internal(set) weak var rootDelegate: UICollectionViewDelegateFlowLayout?
+    @objc open internal(set) weak var rootDelegate: UICollectionViewDelegateFlowLayout?
     
     /// The index of the item that is currently in focus.
     ///
     /// The layout uses this to know which page to center in the view.
-    open internal(set) var currentlyFocusedItem: Int = 0
+    @objc open internal(set) var currentlyFocusedItem: Int = 0
    
     /// The index of the item that was in focus when the user began a touch event.
     ///
@@ -94,23 +94,23 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
     }
 
     /// Number of cells to buffer
-    open internal(set) var buffer: Int = 2
+    @objc open internal(set) var buffer: Int = 2
     
     /// Cached count of current number of items
-    var count = 0
+    @objc var count = 0
 
     /// Whether or not we're cued to jump
-    var jumping = false
+    @objc var jumping = false
     
     /// Current direction our focus is traveling
     var focusHeading: UIFocusHeading?
     
     /// Cell to focus on if we update focus
-    var manualFocusCell: IndexPath?
+    @objc var manualFocusCell: IndexPath?
     
     /// Returns the index path of the root data source item given an index path from this collection
     /// view, which naturally includes the buffer cells.
-    open func adjustedIndexPathForIndexPath(_ indexPath: IndexPath) -> IndexPath {
+    @objc open func adjustedIndexPathForIndexPath(_ indexPath: IndexPath) -> IndexPath {
         precondition(count >= buffer, "Ouroboros requires at least twice the number of items per page to work properly. For best results: a number that is evenly divisible by the number of items per page.")
         let index = indexPath.item
         let wrapped = (index - buffer < 0) ? (count + (index - buffer)) : (index - buffer)
@@ -231,7 +231,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         super.reloadItems(at: adjustedIntexPaths)
     }
     
-    func scrollToItem(_ item: Int, animated: Bool) {
+    @objc func scrollToItem(_ item: Int, animated: Bool) {
         if let initialOffset = (self.collectionViewLayout as! Layout).offsetForItemAtIndex(item) {
             self.setContentOffset(CGPoint(x: initialOffset,y: self.contentOffset.y), animated: animated)
         }
@@ -244,7 +244,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
     
     // MARK: - Auto Scroll
     
-    func beginAutoScroll() {
+    @objc func beginAutoScroll() {
         guard autoScroll else {
             return
         }
@@ -254,11 +254,11 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
             selector: #selector(scrollToNextPage), userInfo: nil, repeats: true)
     }
     
-    func stopAutoScroll() {
+    @objc func stopAutoScroll() {
         scrollTimer?.invalidate()
     }
     
-    func scrollToNextPage() {
+    @objc func scrollToNextPage() {
         var nextItem = self.currentlyFocusedItem + itemsPerPage
         if nextItem >= buffer + count {
             nextItem -= count
@@ -285,7 +285,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
             animated: false)
     }
     
-    func carouselIndexPathsForOriginalIndexPaths(indexPaths: [IndexPath]) -> [IndexPath] {
+    @objc func carouselIndexPathsForOriginalIndexPaths(indexPaths: [IndexPath]) -> [IndexPath] {
         return indexPaths.reduce([IndexPath]()) { (prev, index) -> [IndexPath] in
             let adjustedIndex = IndexPath.init(row: index.row + buffer, section: index.section)
             if index.row >= buffer && index.row < count - buffer {
@@ -299,11 +299,11 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
     // MARK: - Layout
     
     class Layout: UICollectionViewFlowLayout {
-        var totalItemWidth: CGFloat {
+        @objc var totalItemWidth: CGFloat {
             return itemSize.width + minimumLineSpacing
         }
         
-        var carousel: InfiniteCarousel {
+        @objc var carousel: InfiniteCarousel {
             guard let carousel = collectionView as? InfiniteCarousel else {
                 fatalError("This layout should only be used by InfiniteCarousel instances")
             }
