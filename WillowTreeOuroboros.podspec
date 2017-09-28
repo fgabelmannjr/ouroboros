@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "WillowTreeOuroboros"
-  s.version      = "0.2.1"
+  s.version      = "0.2.2"
   s.summary      = "Infinitely scrolling carousel for tvOS"
   s.description  = <<-DESC
                    Ouroboros implements an infinitely scrolling carousel for
