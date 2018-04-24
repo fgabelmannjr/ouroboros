@@ -29,7 +29,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
             fatalError("InfiniteCarousel can only be used with UICollectionViewFlowLayout instances")
         }
         object_setClass(collectionViewLayout, Layout.self)
-        delegate = self
+        super.delegate = self
         setNeedsFocusUpdate()
     }
     
@@ -157,58 +157,52 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         }
     }
     
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if shouldEnableInfiniteScroll {
-            let adjustedPath = adjustedIndexPathForIndexPath(indexPath)
-            return rootDataSource.collectionView(collectionView, cellForItemAt: adjustedPath)
-        } else {
-            return rootDataSource.collectionView(collectionView, cellForItemAt: indexPath)
-        }
+  open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    if shouldEnableInfiniteScroll {
+      let adjustedPath = adjustedIndexPathForIndexPath(indexPath)
+      return rootDataSource.collectionView(collectionView, cellForItemAt: adjustedPath)
+    } else {
+      return rootDataSource.collectionView(collectionView, cellForItemAt: indexPath)
     }
-    
-    open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard (rootDelegate != nil) else {
-            return
-        }
-        rootDelegate?.collectionView!(collectionView, willDisplay: cell, forItemAt: indexPath);
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard (rootDelegate != nil) else {
-            return
-        }
-        
-        rootDelegate?.collectionView!(collectionView, didSelectItemAt: indexPath)
-    }
-    
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        initiallyFocusedItem = currentlyFocusedItem
-        super.touchesBegan(touches, with: event)
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return rootDelegate?.collectionView?(collectionView, shouldHighlightItemAt: indexPath) ?? true
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        rootDelegate?.collectionView?(collectionView, didHighlightItemAt: indexPath)
-    }
-    open func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
-        rootDelegate?.collectionView?(collectionView, didUnhighlightItemAt: indexPath)
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return rootDelegate?.collectionView?(collectionView, shouldSelectItemAt:indexPath) ?? true
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        return rootDelegate?.collectionView?(collectionView, shouldDeselectItemAt: indexPath) ?? true
-    }
+  }
   
-    open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        rootDelegate?.collectionView?(collectionView, didDeselectItemAt: indexPath)
-    }
-    
+  
+  open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    initiallyFocusedItem = currentlyFocusedItem
+    super.touchesBegan(touches, with: event)
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+    return rootDelegate?.collectionView?(collectionView, shouldHighlightItemAt: indexPath) ?? true
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+    rootDelegate?.collectionView?(collectionView, didHighlightItemAt: indexPath)
+  }
+  open func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+    rootDelegate?.collectionView?(collectionView, didUnhighlightItemAt: indexPath)
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+    return rootDelegate?.collectionView?(collectionView, shouldSelectItemAt:indexPath) ?? true
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+    return rootDelegate?.collectionView?(collectionView, shouldDeselectItemAt: indexPath) ?? true
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    rootDelegate?.collectionView?(collectionView, didSelectItemAt: indexPath)
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    rootDelegate?.collectionView?(collectionView, didDeselectItemAt: indexPath)
+  }
+  
+  open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    rootDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+  }
+
     open func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
         rootDelegate?.collectionView?(collectionView, willDisplaySupplementaryView: view, forElementKind: elementKind, at: indexPath)
     }
@@ -240,6 +234,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
     open func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
         
         let result = rootDelegate?.collectionView?(collectionView, shouldUpdateFocusIn: context) ?? true
+      
         // Allow users to leave
         guard let to = context.nextFocusedIndexPath else {
             beginAutoScroll()
@@ -260,17 +255,7 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         
         focusHeading = context.focusHeading
         currentlyFocusedItem = to.item
-        
-        if focusHeading == .left && to.item < buffer {
-            jumping = true
-            currentlyFocusedItem += count
-        }
-        
-        if focusHeading == .right && to.item >= buffer + count {
-            jumping = true
-            currentlyFocusedItem -= count
-        }
-        
+      
         if shouldEnableInfiniteScroll {
             if focusHeading == .left && to.item < buffer {
                 jumping = true
@@ -380,18 +365,18 @@ open class InfiniteCarousel: UICollectionView, UICollectionViewDataSource, UICol
         self.setContentOffset(CGPoint(x: currentOffset + jumpOffset, y: self.contentOffset.y),
             animated: false)
     }
-    
-    @objc func carouselIndexPathsForOriginalIndexPaths(indexPaths: [IndexPath]) -> [IndexPath] {
-        return indexPaths.reduce([IndexPath]()) { (prev, index) -> [IndexPath] in
-            let adjustedIndex = IndexPath.init(row: index.row + buffer, section: index.section)
-            if index.row >= buffer && index.row < count - buffer {
-                return prev + [adjustedIndex]
-            }
-            let boundingIndexPath = IndexPath.init(row: (index.row + buffer + count) % (count * 2), section: index.section)
-            return prev + [adjustedIndex, boundingIndexPath]
-        }
+  
+  @objc func carouselIndexPathsForOriginalIndexPaths(indexPaths: [IndexPath]) -> [IndexPath] {
+    return indexPaths.reduce([IndexPath]()) { (prev, index) -> [IndexPath] in
+      let adjustedIndex = IndexPath.init(row: index.row + buffer, section: index.section)
+      if index.row >= buffer && index.row < count - buffer {
+        return prev + [adjustedIndex]
+      }
+      let boundingIndexPath = IndexPath.init(row: (index.row + buffer + count) % (count * 2), section: index.section)
+      return prev + [adjustedIndex, boundingIndexPath]
     }
-    
+  }
+
     // MARK: - Layout
     
     class Layout: UICollectionViewFlowLayout {
