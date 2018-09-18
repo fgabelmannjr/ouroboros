@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.authors      = { "Ian Terrell" => "ian.terrell@gmail.com" }
   s.source       = { :git => "https://github.com/willowtreeapps/ouroboros.git",
                      :tag => "0.2.1" }
-
+  s.swift_version = '3.0'
   s.platform = :tvos
 
   s.source_files = "Ouroboros/**/*.swift",
